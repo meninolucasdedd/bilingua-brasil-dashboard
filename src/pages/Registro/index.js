@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-import logoImg from "../../assets/logo.svg";
+import swal from "sweetalert";
 
+import logoImg from "../../assets/logo.svg";
 import "./style.css";
 
-import api from "../../services/api";
+import axios from "../../services/api";
 
 export default function Registro() {
   const [nome, setNome] = useState("");
@@ -13,28 +14,69 @@ export default function Registro() {
   const [cidade, setCidade] = useState("");
   const [endereco, setEndereco] = useState("");
   const [uf, setUf] = useState("");
+  const [perfil, setPerfil] = useState("");
   const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [instituicao, setInstituicao] = useState("");
   const [site, setSite] = useState("");
 
   const history = useHistory();
 
+  function validate() {
+    if (perfil === "Instituicao") {
+      if (nome !== "" && email !== "" && cnpj !== "" && instituicao !== "")
+        return true;
+      else return false;
+    } else {
+      if (nome !== "" && email !== "" && senha !== "" && instituicao !== "")
+        return true;
+      else return false;
+    }
+  }
+
   async function handleRegistro(event) {
     event.preventDefault();
-    const data = {
-      nome,
-      cnpj,
-      cidade,
-      endereco,
-      uf,
-      email,
-      site,
-    };
-    try {
-      const response = await api.post("instituicoes", data);
-      alert(`Seu dado de acesso é: ${response.data.id}`);
-      history.push("/");
-    } catch (err) {
-      alert("Não funcionou, verifique novamente");
+
+    if (validate()) {
+      const data = {
+        nome,
+        cnpj,
+        cidade,
+        endereco,
+        uf,
+        email,
+        site,
+      };
+
+      try {
+        await axios.post("registro", data);
+
+        swal({
+          title: `Cadastro realizado com sucesso`,
+          text: "Acesse seu email e confirme sua ativação!",
+          icon: "success",
+          button: true,
+          dangerMode: true,
+        });
+
+        history.push("/");
+      } catch (err) {
+        swal({
+          title: `Problema ao realizar cadastro`,
+          text: "Verifique as informações de entrada e tente novamente",
+          icon: "error",
+          button: true,
+          dangerMode: true,
+        });
+      }
+    } else {
+      swal({
+        title: "Opa!",
+        text: "Todos os campos são obrigatórios",
+        icon: "error",
+        button: true,
+        dangerMode: true,
+      });
     }
   }
 
@@ -42,7 +84,7 @@ export default function Registro() {
     <div className="registro-container">
       <div className="content">
         <section>
-          <img src={logoImg} alt="Logo Bilíngua" srcset="" />
+          <img src={logoImg} alt="Logo Bilíngua" className="logo" srcset="" />
           <h1>Cadastro</h1>
           <p>
             Cadastre sua instituição para ter acesso ao conteúdo personalizado

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-import { FiLogIn, FiMail } from "react-icons/fi";
+import { FiLogIn } from "react-icons/fi";
 
 import swal from "sweetalert";
 import axios from "../../services/api";
@@ -52,7 +52,7 @@ export default function Login() {
         title: "Não é possível realizar login",
         text: "Todos os campos são obrigatórios.",
         icon: "error",
-        button: true,
+        buttons: ["Estou com problemas", "Ok"],
         dangerMode: true,
       });
     }
